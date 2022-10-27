@@ -34,24 +34,24 @@ const addData = (url) => {
     url,
   });
 };
+const deleteData = (firstItemHeight) => {
+  dataList.value.shift();
+  move -= firstItemHeight;
+  wrap.value.style.top = `-${move}px`;
+  nextTick(checkItemLength);
+};
 
+let start = null;
 let move = 0;
 const startAnimation = () => {
-  const firstItem = wrap.value.children[0];
-  const firstItemHeight = firstItem ? firstItem.offsetHeight : 0;
-  let start = null;
   function step(timestamp) {
+    const firstItem = wrap.value.children[0];
+    const firstItemHeight = firstItem ? firstItem.offsetHeight : 0;
     const time = start ? timestamp - start : 0;
     start = timestamp;
     move += (time / 10) * props.secFor100px;
     wrap.value.style.top = `-${move}px`;
-    if (move >= firstItemHeight) {
-      move -= firstItemHeight;
-      dataList.value.shift();
-      wrap.value.style.top = `-${move}px`;
-      nextTick(checkItemLength);
-      return;
-    }
+    if (move >= firstItemHeight) deleteData(firstItemHeight);
     window.requestAnimationFrame(step);
   }
   window.requestAnimationFrame(step);
